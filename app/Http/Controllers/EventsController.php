@@ -124,8 +124,6 @@ class EventsController extends BaseController
                 }
             }
         }
-                // echo "<pre>";
-                // print_r($data_array);
         return response()->json($data_array);
         // throw new \Exception('implement in coding task 1');
     }

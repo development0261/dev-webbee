@@ -94,7 +94,32 @@ class MenuController extends BaseController
     ]
      */
 
-    public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+    public function getMenuItems($id=NULL) {
+        /*get all menuitems based on nesting levels*/
+        if($id!=NULL)
+        {
+            $menuItems = MenuItem::where('parent_id',$id)->get();
+        }
+        else
+        {
+            $menuItems = MenuItem::all();   
+        }
+        $data_array = [];
+        if(MenuItem::count()>0)
+        {
+            foreach ($menuItems as $menuukey => $menuuval)
+            {
+                // $children = [];
+                $data_array[$menuukey]['id'] = $menuuval->id;
+                $data_array[$menuukey]['name'] = $menuuval->name;
+                $data_array[$menuukey]['url'] = $menuuval->url;
+                $data_array[$menuukey]['parent_id '] = $menuuval->parent_id ;
+                $data_array[$menuukey]['created_at'] = date('Y-m-dTH:i:s',strtotime($menuuval->created_at));
+                $data_array[$menuukey]['updated_at'] = date('Y-m-dTH:i:s',strtotime($menuuval->updated_at));
+                $data_array[$menuukey]['children'] = $this->getMenuItems($menuuval->id);
+            }
+        }
+        return response()->json($data_array);
+        // throw new \Exception('implement in coding task 3');
     }
 }
