@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\Workshop;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -97,7 +98,36 @@ class EventsController extends BaseController
      */
 
     public function getEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 1');
+        /*get all events with workshops*/
+        $events = Event::all();
+        $data_array = [];
+        if(Event::count()>0)
+        {
+            foreach ($events as $eventkey => $eventval)
+            {
+                $data_array[$eventkey]['id'] = $eventval->id;
+                $data_array[$eventkey]['name'] = $eventval->name;
+                $data_array[$eventkey]['created_at'] = date('Y-m-dTH:i:s',strtotime($eventval->created_at));
+                $data_array[$eventkey]['updated_at'] = date('Y-m-dTH:i:s',strtotime($eventval->updated_at));
+                $data_array[$eventkey]['workshops']  = [];
+                $workshops  = Workshop::where('event_id',$eventval->id)->get();
+                // echo $workshops."--".$eventval->id;
+                foreach ($workshops as $workshopkey => $workshopvalue)
+                {
+                    $data_array[$eventkey]['workshops'][$workshopkey]['id'] = $workshopvalue->id;
+                    $data_array[$eventkey]['workshops'][$workshopkey]['start'] = $workshopvalue->start;
+                    $data_array[$eventkey]['workshops'][$workshopkey]['end'] = $workshopvalue->end;
+                    $data_array[$eventkey]['workshops'][$workshopkey]['event_id'] = $workshopvalue->event_id;
+                    $data_array[$eventkey]['workshops'][$workshopkey]['name'] = $workshopvalue->name;
+                    $data_array[$eventkey]['workshops'][$workshopkey]['created_at'] = date('Y-m-dTH:i:s',strtotime($workshopvalue->created_at));
+                    $data_array[$eventkey]['workshops'][$workshopkey]['updated_at'] = date('Y-m-dTH:i:s',strtotime($workshopvalue->updated_at));
+                }
+            }
+        }
+                // echo "<pre>";
+                // print_r($data_array);
+        return response()->json($data_array);
+        // throw new \Exception('implement in coding task 1');
     }
 
 
